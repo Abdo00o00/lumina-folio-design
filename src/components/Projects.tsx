@@ -1,11 +1,36 @@
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 
 const Projects = () => {
   // Categories for filtering
   const categories = ['All', 'Web Design', 'Development', 'UX/UI', 'Branding'];
   const [activeCategory, setActiveCategory] = useState('All');
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = sectionRef.current?.querySelectorAll('.animate-on-scroll');
+    elements?.forEach(el => {
+      observer.observe(el);
+    });
+
+    return () => {
+      elements?.forEach(el => {
+        observer.unobserve(el);
+      });
+    };
+  }, []);
 
   // Project data
   const projects = [
@@ -59,16 +84,16 @@ const Projects = () => {
     : projects.filter(project => project.category === activeCategory);
 
   return (
-    <section id="projects" className="section-padding bg-black">
+    <section id="projects" className="section-padding bg-black" ref={sectionRef}>
       <div className="container-custom">
         {/* Section header */}
-        <div className="text-center mb-16 opacity-0 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <div className="text-center mb-16 opacity-0 animate-on-scroll">
           <p className="text-luxury-gold tracking-widest text-sm font-medium">MY WORK</p>
           <h2 className="text-3xl md:text-4xl font-bold mt-2">Featured Projects</h2>
         </div>
 
         {/* Category filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12 opacity-0 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <div className="flex flex-wrap justify-center gap-4 mb-12 opacity-0 animate-on-scroll" style={{ animationDelay: '0.2s' }}>
           {categories.map((category) => (
             <button
               key={category}
@@ -89,8 +114,8 @@ const Projects = () => {
           {filteredProjects.map((project, index) => (
             <div 
               key={project.id} 
-              className="project-card group bg-luxury-black border border-white/10 opacity-0 animate-fade-in"
-              style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+              className="project-card group bg-luxury-black border border-white/10 opacity-0 animate-on-scroll"
+              style={{ animationDelay: `${0.3 + index * 0.1}s` }}
             >
               <div className="overflow-hidden aspect-video">
                 <img
@@ -98,6 +123,7 @@ const Projects = () => {
                   alt={project.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-luxury-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <div className="p-6 space-y-3">
                 <div className="flex justify-between items-center">
@@ -114,7 +140,7 @@ const Projects = () => {
         </div>
         
         {/* View all button */}
-        <div className="mt-16 text-center opacity-0 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+        <div className="mt-16 text-center opacity-0 animate-on-scroll" style={{ animationDelay: '0.8s' }}>
           <Button className="bg-transparent hover:bg-luxury-gold/10 text-luxury-gold border border-luxury-gold px-8 py-6 rounded-none">
             View All Projects
           </Button>

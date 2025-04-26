@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +13,34 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const elements = entry.target.querySelectorAll('.animate-on-scroll');
+            elements.forEach(el => {
+              el.classList.add('animate-fade-in');
+            });
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -40,21 +68,21 @@ const Contact = () => {
   };
   
   return (
-    <section id="contact" className="section-padding bg-black relative overflow-hidden">
+    <section id="contact" className="section-padding bg-black relative overflow-hidden" ref={sectionRef}>
       {/* Background elements */}
       <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-luxury-gold/5 blur-3xl rounded-full"></div>
       <div className="absolute bottom-0 right-0 w-1/4 h-1/4 bg-luxury-emerald/5 blur-3xl rounded-full"></div>
       
       <div className="container-custom relative z-10">
         {/* Section header */}
-        <div className="text-center mb-16 opacity-0 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <div className="text-center mb-16 opacity-0 animate-on-scroll">
           <p className="text-luxury-gold tracking-widest text-sm font-medium">GET IN TOUCH</p>
           <h2 className="text-3xl md:text-4xl font-bold mt-2">Let's Work Together</h2>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Contact information */}
-          <div className="space-y-8 opacity-0 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <div className="space-y-8 opacity-0 animate-on-scroll" style={{ animationDelay: '0.2s' }}>
             <h3 className="text-2xl font-semibold">Contact Information</h3>
             
             <p className="text-white/80">
@@ -128,7 +156,7 @@ const Contact = () => {
           </div>
           
           {/* Contact form */}
-          <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+          <div className="opacity-0 animate-on-scroll" style={{ animationDelay: '0.4s' }}>
             <form onSubmit={handleSubmit} className="space-y-6 border border-white/10 p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">

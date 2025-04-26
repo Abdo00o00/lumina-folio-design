@@ -1,11 +1,39 @@
 
+import { useEffect, useRef } from 'react';
+
 const About = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = sectionRef.current?.querySelectorAll('.animate-on-scroll');
+    elements?.forEach(el => {
+      observer.observe(el);
+    });
+
+    return () => {
+      elements?.forEach(el => {
+        observer.unobserve(el);
+      });
+    };
+  }, []);
+
   return (
-    <section id="about" className="section-padding bg-luxury-black">
+    <section id="about" className="section-padding bg-luxury-black" ref={sectionRef}>
       <div className="container-custom">
         <div className="flex flex-col lg:flex-row items-center gap-16">
           {/* Image column */}
-          <div className="lg:w-1/2 opacity-0 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="lg:w-1/2 opacity-0 animate-on-scroll" style={{ animationDelay: '0.2s' }}>
             <div className="relative">
               {/* Gold frame */}
               <div className="absolute -inset-2 border border-luxury-gold/30"></div>
@@ -29,12 +57,12 @@ const About = () => {
           
           {/* Text column */}
           <div className="lg:w-1/2 space-y-8">
-            <div className="space-y-2 opacity-0 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <div className="space-y-2 opacity-0 animate-on-scroll" style={{ animationDelay: '0.4s' }}>
               <p className="text-luxury-gold tracking-widest text-sm font-medium">ABOUT ME</p>
               <h2 className="text-3xl md:text-4xl font-bold">Crafting Digital Excellence</h2>
             </div>
             
-            <div className="space-y-6 text-white/80 opacity-0 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            <div className="space-y-6 text-white/80 opacity-0 animate-on-scroll" style={{ animationDelay: '0.6s' }}>
               <p>
                 I'm a passionate designer and developer with over 8 years of experience creating stunning digital experiences that blend innovative technology with elegant, minimalist design principles.
               </p>
@@ -48,7 +76,7 @@ const About = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-2 gap-6 pt-6 opacity-0 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            <div className="grid grid-cols-2 gap-6 pt-6 opacity-0 animate-on-scroll" style={{ animationDelay: '0.8s' }}>
               <div>
                 <h3 className="text-luxury-gold text-4xl font-bold">50+</h3>
                 <p className="text-white/70 mt-2">Completed Projects</p>

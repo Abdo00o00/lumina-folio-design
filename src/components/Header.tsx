@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
   // Navigation items
   const navItems = [
@@ -20,11 +21,34 @@ const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+      
+      // Find which section is currently in viewport
+      const sections = document.querySelectorAll('section[id]');
+      sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+        if (sectionTop < 100 && sectionTop > -300) {
+          setActiveSection(section.id);
+        }
+      });
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Smooth scroll handler
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className={cn(
@@ -35,6 +59,7 @@ const Header = () => {
         {/* Logo */}
         <a 
           href="#home" 
+          onClick={(e) => handleNavClick(e, '#home')}
           className="text-2xl font-bold font-montserrat text-white tracking-wider"
         >
           <span className="text-luxury-gold">LUMINA</span>FOLIO
@@ -46,7 +71,13 @@ const Header = () => {
             <a
               key={item.name}
               href={item.href}
-              className="text-sm font-medium tracking-wider text-white/80 hover:text-luxury-gold transition-colors duration-300"
+              onClick={(e) => handleNavClick(e, item.href)}
+              className={cn(
+                "text-sm font-medium tracking-wider transition-colors duration-300",
+                activeSection === item.href.substring(1) 
+                  ? "text-luxury-gold" 
+                  : "text-white/80 hover:text-luxury-gold"
+              )}
             >
               {item.name}
             </a>
@@ -85,8 +116,13 @@ const Header = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-sm font-medium py-2 text-white/80 hover:text-luxury-gold transition-colors duration-300"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleNavClick(e, item.href)}
+                  className={cn(
+                    "text-sm font-medium py-2 transition-colors duration-300",
+                    activeSection === item.href.substring(1) 
+                      ? "text-luxury-gold" 
+                      : "text-white/80 hover:text-luxury-gold"
+                  )}
                 >
                   {item.name}
                 </a>
